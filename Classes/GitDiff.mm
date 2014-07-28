@@ -33,12 +33,19 @@ static GitDiff *gitDiffPlugin;
 		gitDiffPlugin = [[self alloc] init];
         gitDiffPlugin.diffsByFile = [NSMutableDictionary new];
 
-        gitDiffPlugin.deletedColor  = [NSColor colorWithCalibratedRed:1. green:.5 blue:.5 alpha:1.];
-        gitDiffPlugin.modifiedColor = [NSColor colorWithCalibratedRed:1. green:.9 blue:.6 alpha:1.];
-        gitDiffPlugin.addedColor    = [NSColor colorWithCalibratedRed:.7 green:1. blue:.7 alpha:1.];
+
+		float a = 0.25;
+        gitDiffPlugin.deletedColor  = [NSColor colorWithCalibratedRed:1. green:0 blue:0 alpha:a];
+        gitDiffPlugin.modifiedColor = [NSColor colorWithCalibratedRed:0.75 green:.0 blue:1.0 alpha:a];
+        gitDiffPlugin.addedColor    = [NSColor colorWithCalibratedRed:0 green:1 blue:.0 alpha:a];
 
         gitDiffPlugin.popover = [[NSText alloc] initWithFrame:NSZeroRect];
-        gitDiffPlugin.popover.backgroundColor = gitDiffPlugin.modifiedColor;
+		float s = 0.5;
+		NSColor * solidAlpha = [NSColor colorWithCalibratedRed:[gitDiffPlugin.modifiedColor redComponent] * s
+														 green:[gitDiffPlugin.modifiedColor greenComponent] * s
+														  blue:[gitDiffPlugin.modifiedColor blueComponent] * s
+														 alpha:1.0];
+        gitDiffPlugin.popover.backgroundColor = solidAlpha;
 
         Class aClass = NSClassFromString(@"DVTTextSidebarView");
         [self swizzleClass:aClass
@@ -194,7 +201,8 @@ inline bool exists( const _M &map, const _K &key ) {
             if ( highlight ) {
                 [highlight setFill];
                 [self getParagraphRect:&a0 firstLineRect:&a1 forLineNumber:line];
-                NSRectFill( CGRectInset(a0,1.,1.) );
+                //NSRectFill( CGRectInset(a0,1.,1.) );
+				[[NSBezierPath bezierPathWithRect:CGRectInset(a0,1.,1.)] fill];
             }
             else if ( exists( diffs->deleted, line ) ) {
                 [gitDiffPlugin.deletedColor setFill];
